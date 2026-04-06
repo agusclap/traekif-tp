@@ -1,0 +1,24 @@
+user@2020bigdata7:~/traefik$ curl -i http://soagmr.mooo.com/api/whoami
+HTTP/1.1 200 OK
+Content-Length: 397
+Content-Type: text/plain; charset=utf-8
+Date: Mon, 06 Apr 2026 15:20:31 GMT
+
+Hostname: 2895f2b66ddd
+IP: 127.0.0.1
+IP: ::1
+IP: 172.19.0.6
+RemoteAddr: 172.19.0.4:41812
+GET /whoami HTTP/1.1
+Host: soagmr.mooo.com
+User-Agent: curl/7.58.0
+Accept: */*
+Accept-Encoding: gzip
+X-Forwarded-For: 143.0.100.216
+X-Forwarded-Host: soagmr.mooo.com
+X-Forwarded-Port: 80
+X-Forwarded-Prefix: /api
+X-Forwarded-Proto: http
+X-Forwarded-Server: a8e59b77ec44
+X-Real-Ip: 143.0.100.216
+

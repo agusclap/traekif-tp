@@ -1,0 +1,8 @@
+user@2020bigdata7:~/traefik$ docker compose ps
+WARN[0000] /home/user/traefik/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion
+NAME               IMAGE            COMMAND                  SERVICE   CREATED          STATUS          PORTS
+traefik            traefik:v2.11    "/entrypoint.sh --ap…"   traefik   20 minutes ago   Up 20 minutes   0.0.0.0:80->80/tcp, [::]:80->80/tcp, 0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp
+traefik-static-1   nginx:alpine     "/docker-entrypoint.…"   static    20 minutes ago   Up 20 minutes   80/tcp
+traefik-whoami-1   traefik/whoami   "/whoami"                whoami    20 minutes ago   Up 20 minutes   80/tcp
+traefik-whoami-2   traefik/whoami   "/whoami"                whoami    20 minutes ago   Up 20 minutes   80/tcp
+traefik-whoami-3   traefik/whoami   "/whoami"                whoami    20 minutes ago   Up 20 minutes   80/tcp

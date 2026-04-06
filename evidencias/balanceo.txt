@@ -1,0 +1,11 @@
+user@2020bigdata7:~/traefik$ for i in {1..10}; do curl -s soagmr.mooo.com/api/whoami | grep "Hostname"; done
+Hostname: fbdb0a79deeb
+Hostname: 2895f2b66ddd
+Hostname: e746e21e98a1
+Hostname: fbdb0a79deeb
+Hostname: 2895f2b66ddd
+Hostname: e746e21e98a1
+Hostname: fbdb0a79deeb
+Hostname: 2895f2b66ddd
+Hostname: e746e21e98a1
+Hostname: fbdb0a79deeb

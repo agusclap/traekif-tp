@@ -1,0 +1,9 @@
+user@2020bigdata7:~/traefik$ curl -I soagmr.mooo.com:8080
+HTTP/1.1 308 Permanent Redirect
+Location: http://soagmr.mooo.com:8080/dashboard/
+Date: Mon, 06 Apr 2026 15:23:05 GMT
+Content-Length: 18
+Content-Type: text/plain; charset=utf-8
+
+
+
