@@ -39,24 +39,24 @@ docker compose ps
 
 ## Probar servicio API
 ```bash
-curl -i http://localhost/api/whoami
+curl -i http://soagmr.mooo.com/api/whoami
 ```
 
 ## Probar servicio static
 ```bash
-curl -i http://localhost/static/
+curl -i soagmr.mooo.com/static/
 ```
 
 ## Probar balanceo de carga
 ```bash
-for i in {1..10}; do curl -s http://localhost/api/whoami | grep "Hostname"; done
+for i in {1..10}; do curl -s soagmr.mooo.com/api/whoami | grep "Hostname"; done
 ```
 Se espera observar diferentes hostnames en cada request, lo que demuestra el balanceo de carga entre múltiples instancias.
 
 ## Dashboard de Traefik
 Abrir en navegador:
 ```bash
-http://localhost:8080/dashboard/
+http://soagmr.mooo.com:8080/dashboard/
 ```
 ## Middleware utilizado
 Se implementa el middleware StripPrefix:
