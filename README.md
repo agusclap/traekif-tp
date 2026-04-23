@@ -23,6 +23,27 @@ Se utilizan:
 - Los servicios no exponen puertos al host
 - Todo el tráfico pasa por Traefik
 
+## Configuración dinámica (File Provider)
+
+Además de la configuración mediante labels (Docker provider), se utiliza un archivo `dynamic.yml` como configuración dinámica adicional.
+
+Esto se habilita en Traefik con:
+
+```bash
+--providers.file.filename=/etc/traefik/dynamic.yml
+--providers.file.watch=true
+```
+En este archivo se define:
+
+- Un router /externo
+- Un middleware StripPrefix
+- Un servicio con balanceo ponderado (weighted)
+
+## Probar ruta externa
+```bash
+curl -i http://soagmr.mooo.com/externo/get
+```
+Esto redirige hacia servicios externos configurados en dynamic.yml.
 ## Requisitos
 - Docker
 - Docker Compose
@@ -44,12 +65,12 @@ curl -i http://soagmr.mooo.com/api/whoami
 
 ## Probar servicio static
 ```bash
-curl -i soagmr.mooo.com/static/
+curl -i http://soagmr.mooo.com/static/
 ```
 
 ## Probar balanceo de carga
 ```bash
-for i in {1..10}; do curl -s soagmr.mooo.com/api/whoami | grep "Hostname"; done
+for i in {1..10}; do curl -s http://soagmr.mooo.com/api/whoami | grep "Hostname"; done
 ```
 Se espera observar diferentes hostnames en cada request, lo que demuestra el balanceo de carga entre múltiples instancias.
 
@@ -67,7 +88,7 @@ Se implementa el middleware StripPrefix:
 Esto permite que los servicios internos reciban rutas correctas sin el prefijo.
 
 ## Evidencias
-Se incluyen en la carpeta evidencias/:
+Se incluyen en la carpeta `evidencias/`:
 
 - Estado de contenedores (docker compose ps)
 - Puertos expuestos (docker ps)
@@ -75,6 +96,7 @@ Se incluyen en la carpeta evidencias/:
 - Prueba de static
 - Prueba de balanceo de carga
 - Acceso al dashboard
+- Prueba de ruta externa configurada con File Provider
 
 ## Observaciones
 - Solo Traefik expone puertos al exterior

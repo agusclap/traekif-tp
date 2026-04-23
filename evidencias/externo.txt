@@ -1,0 +1,24 @@
+user@2020bigdata7:~/traefik$ curl -i http://143.0.100.216/externo/get
+HTTP/1.1 200 OK
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Origin: *
+Content-Length: 429
+Content-Type: application/json
+Date: Thu, 23 Apr 2026 22:39:00 GMT
+Server: gunicorn/19.9.0
+
+{
+  "args": {},
+  "headers": {
+    "Accept": "*/*",
+    "Accept-Encoding": "gzip",
+    "Host": "143.0.100.216",
+    "User-Agent": "curl/7.58.0",
+    "X-Amzn-Trace-Id": "Root=1-69ea9f84-76513ea60601f09f47eb85ab",
+    "X-Forwarded-Host": "143.0.100.216",
+    "X-Forwarded-Prefix": "/externo",
+    "X-Forwarded-Server": "0c16e2630ab7"
+  },
+  "origin": "143.0.100.216, 143.0.100.216",
+  "url": "http://143.0.100.216/get"
+}
