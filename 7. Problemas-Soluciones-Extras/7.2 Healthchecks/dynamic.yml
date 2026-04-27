@@ -1,0 +1,21 @@
+http:
+  routers:
+    whoami-file-router:
+      rule: "PathPrefix(`/file`)"
+      entryPoints:
+        - web
+      service: whoami-file-service
+      middlewares:
+        - strip-file
+
+  middlewares:
+    strip-file:
+      stripPrefix:
+        prefixes:
+          - "/file"
+
+  services:
+    whoami-file-service:
+      loadBalancer:
+        servers:
+          - url: "http://whoami-file:80"

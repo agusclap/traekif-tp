@@ -1,0 +1,21 @@
+http:
+  routers:
+    externo-router:
+      rule: "PathPrefix(`/externo`)"
+      entryPoints:
+        - web
+      service: externo-service
+      middlewares:
+        - strip-externo
+
+  middlewares:
+    strip-externo:
+      stripPrefix:
+        prefixes:
+          - "/externo"
+
+  services:
+    externo-service:
+      loadBalancer:
+        servers:
+          - url: "http://httpbin.org"
