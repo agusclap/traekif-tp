@@ -6,7 +6,7 @@
 - Bruno Garibaldi
 
 ## Descripción
-Este trabajo práctico implementa una arquitectura simple basada en microservicios utilizando Traefik como reverse proxy y API Gateway.
+La arquitectura base de este trabajo práctico implementa una arquitectura simple basada en microservicios utilizando Traefik como reverse proxy y API Gateway.
 
 Se utilizan:
 - Traefik como punto único de entrada
@@ -16,6 +16,12 @@ Se utilizan:
 - Middleware StripPrefix
 - Load balancing real entre instancias
 
+## Observaciones
+- Solo Traefik expone puertos al exterior
+- Los servicios se encuentran en la misma red interna de Docker
+- El balanceo de carga se realiza automáticamente entre instancias
+- Se utiliza la imagen traefik/whoami para simplificar la implementación del servicio API
+
 ## Arquitectura
 - Traefik expone:
   - puerto 80 (HTTP)
@@ -23,30 +29,18 @@ Se utilizan:
 - Los servicios no exponen puertos al host
 - Todo el tráfico pasa por Traefik
 
-## Configuración dinámica (File Provider)
-
-Además de la configuración mediante labels (Docker provider), se utiliza un archivo `dynamic.yml` como configuración dinámica adicional.
-
-Esto se habilita en Traefik con:
-
-```bash
---providers.file.filename=/etc/traefik/dynamic.yml
---providers.file.watch=true
-```
-En este archivo se define:
-
-- Un router /externo
-- Un middleware StripPrefix
-- Un servicio con balanceo ponderado (weighted)
-
-## Probar ruta externa
-```bash
-curl -i http://soagmr.mooo.com/externo/get
-```
-Esto redirige hacia servicios externos configurados en dynamic.yml.
 ## Requisitos
 - Docker
-- Docker Compose
+- Docker Compose v2
+
+## Instalación y puesta en marcha arquitectura base.
+Deberá clonar este repositorio y ejecutar (para version 2 de compose):
+```bash
+cd traekif-tp
+```
+
+Aclaración: Notará que el archivo dynamic.yml esta vacio, esto es porque para esta implementación no será utilizada (revisar sección - Configuración dinámica (File Provider))
+En static-content podrá ver un index.html que es el que se servirá con NGINX.
 
 ## Levantar el entorno
 ```bash
@@ -58,27 +52,39 @@ docker compose up -d
 docker compose ps
 ```
 
-## Probar servicio API
+## Verificar contenedores formateados
 ```bash
-curl -i http://soagmr.mooo.com/api/whoami
+docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}\t{{.Image}}"
 ```
 
-## Probar servicio static
-```bash
-curl -i http://soagmr.mooo.com/static/
-```
-
-## Probar balanceo de carga
-```bash
-for i in {1..10}; do curl -s http://soagmr.mooo.com/api/whoami | grep "Hostname"; done
-```
-Se espera observar diferentes hostnames en cada request, lo que demuestra el balanceo de carga entre múltiples instancias.
 
 ## Dashboard de Traefik
 Abrir en navegador:
 ```bash
-http://soagmr.mooo.com:8080/dashboard/
+http://localhost:8080/dashboard/
 ```
+
+## Probar servicio API
+```bash
+curl -i http://localhost/api/whoami
+```
+
+## Ver logs y access logs
+```bash
+docker logs -f traefik 
+```
+
+## Probar servicio static
+```bash
+curl -i http://localhost/static/
+```
+
+## Probar balanceo de carga
+```bash
+for i in {1..10}; do curl -s http://localhost/api/whoami | grep "Hostname"; done
+```
+Se espera observar diferentes hostnames en cada request, lo que demuestra el balanceo de carga entre múltiples instancias.
+
 ## Middleware utilizado
 Se implementa el middleware StripPrefix:
 
@@ -86,6 +92,68 @@ Se implementa el middleware StripPrefix:
 - /static/ → /
 
 Esto permite que los servicios internos reciban rutas correctas sin el prefijo.
+
+## Configuración dinámica (File Provider)
+
+Además de la configuración mediante labels (Docker provider), se utiliza un archivo `dynamic.yml` como configuración dinámica adicional.
+Para ir probando las distintas implementaciones y ejemplos:
+
+```bash
+cd "7-Problemas-Soluciones-Extras"
+```
+
+Allí se encuentran 3 carpetas. Dentro de cada una de ellas se hayan el docker-compose.yml correspondiente para la implementación y el dynamic.yml.
+Para probar su funcionamiento simplemente debe copiar el contenido de esos archivos en los archivos principales de /traefik-tp/docker-compose.yml y /traefik-tp/docker-compose.yml corriendo nuevamente el compose.
+
+### 7.1 Autodescubrimiento y File Provider: configuración dinámica sin reinicio
+
+Prueba a file.
+```bash
+curl http://localhost/file
+```
+### 7.2 HealthChecks
+
+Ver contenedores activos:
+
+```bash
+docker ps
+```
+
+Pausar un contenedor: 
+```bash
+docker pause <ID_DEL_CONTENEDOR>
+```
+¿Qué pasa técnicamente? Docker utiliza una característica del kernel de Linux llamada cgroups freezer. Básicamente, le dice al procesador: "No le des ni un solo ciclo de reloj a este proceso".
+
+Memoria RAM: El contenedor sigue ocupando memoria RAM. Todo el estado de la aplicación (variables, conexiones abiertas, datos temporales) permanece intacto en la memoria.
+
+Despausar un contenedor: 
+```bash
+docker unpause <ID_DEL_CONTENEDOR>
+```
+
+Comprobar funcionamiento:
+```bash
+for i in {1..10}; do curl -s http://localhost/api/whoami | grep "Hostname"; done
+```
+
+### 7.3 Enrutamiento a distintos host con balanceo de carga por prioridad
+
+En la sección 7.3 encontrará una carpeta llamada "balanceador de carga con pesos". Allí se encontrará el dynamic.yml configurado para que funcione el balanceo con wrr por pesos. 
+El otro archivo dynamic.yml corresponde a la primer implementación sin wrr con pesos con ruteo a distintos host.
+
+Prueba a externo:
+```bash
+curl http://localhost/externo/get
+```
+
+Prueba balanceo de carga con pesos:
+```bash
+for i in {1..10}; do curl -s http://localhost/externo/get. | grep "Hostname"; done
+```
+De cada 4 peticiones, 3 deberían responder con el JSON de httpbin y 1 debería dar bad gateway (porque pusimos una url random). Eso justamente demuestra que el tráfico se está repartiendo entre dos hosts distintos.
+
+
 
 ## Evidencias
 Se incluyen en la carpeta `evidencias/`:
@@ -98,9 +166,5 @@ Se incluyen en la carpeta `evidencias/`:
 - Acceso al dashboard
 - Prueba de ruta externa configurada con File Provider
 
-## Observaciones
-- Solo Traefik expone puertos al exterior
-- Los servicios se encuentran en una red interna de Docker
-- El balanceo de carga se realiza automáticamente entre instancias
-- Se utiliza la imagen traefik/whoami para simplificar la implementación del servicio API
+
 

@@ -1,0 +1,10 @@
+Analizando la salida, se observa que el cliente con la IP 201.212.60.205 
+realizó tres peticiones GET a la ruta /api en distintos instantes de tiempo. 
+En todos los casos, se devolvió un código de estado HTTP 200 
+(indicando éxito) con un tamaño de respuesta de 392 bytes.
+Los logs confirman que el identificador "api-router@docker" 
+capturó las solicitudes y las procesó de manera exitosa con una 
+latencia de 2 milisegundos. Por último, se evidencia el correcto 
+balanceo de carga, ya que Traefik distribuyó secuencialmente estas
+peticiones a tres instancias distintas del servicio, representadas por las 
+IPs internas terminadas en .5, .6 y .2.

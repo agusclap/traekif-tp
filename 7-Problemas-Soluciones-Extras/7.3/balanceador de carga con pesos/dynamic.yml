@@ -1,0 +1,37 @@
+http:
+  routers:
+    externo-router:
+      rule: "PathPrefix(`/externo`)"
+      entryPoints:
+        - web
+      service: externo-weighted
+      middlewares:
+        - strip-externo
+
+  middlewares:
+    strip-externo:
+      stripPrefix:
+        prefixes:
+          - "/externo"
+
+  services:
+    externo-weighted:
+      weighted:
+        services:
+          - name: externo-primary
+            weight: 3
+          - name: externo-secondary
+            weight: 1
+
+    externo-primary:
+      loadBalancer:
+        servers:
+          - url: "http://httpbin.org"
+        # Esto es vital para que httpbin responda y no dé 404
+        passHostHeader: true 
+
+    externo-secondary:
+      loadBalancer:
+        servers:
+          - url: "https://url-que-no-existe-12345.com"
+

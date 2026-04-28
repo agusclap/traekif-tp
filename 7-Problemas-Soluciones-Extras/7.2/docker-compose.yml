@@ -51,11 +51,7 @@ services:
       - "traefik.http.routers.static-router.middlewares=static-strip"
       - "traefik.http.middlewares.static-strip.stripprefix.prefixes=/static"
       - "traefik.http.services.static-service.loadbalancer.server.port=80"
-  whoami-file:
-      image: "traefik/whoami"
-      networks:
-        - traefik-net
-      # Sin labels → Docker Provider no lo ve
+
 networks:
   traefik-net:
     driver: bridge
